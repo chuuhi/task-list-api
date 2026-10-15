@@ -8,10 +8,10 @@ class Task(db.Model):
     description: Mapped[str]
     completed_at: Mapped[datetime | None] = mapped_column(nullable=True)
 
-def to_dict(self):
-    return {
-        "id": self.id,
-        "title": self.title,
-        "description": self.description,
-        "completed_at": self.completed_at
-    }
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "is_complete": self.completed_at is not None
+        }
