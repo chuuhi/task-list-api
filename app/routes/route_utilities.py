@@ -38,12 +38,22 @@ def get_models_with_filters(cls, filters=None):
 
     if filters:
         for attribute, value in filters.items():
+            if attribute == "sort":
+                continue
+
             if hasattr(cls, attribute):
                 query = query.where(
                     getattr(cls, attribute).ilike(f"%{value}%")
                 )
 
-    models = db.session.scalars(query.order_by(cls.id))
+    if filters and filters.get("sort") == "asc":
+        query = query.order_by(cls.title.asc())
+    elif filters and filters.get("sort") == "desc":
+        query = query.order_by(cls.title.desc())
+    else:
+        query = query.order_by(cls.id)
+
+    models = db.session.scalars(query)
     models_response = [model.to_dict() for model in models]
 
     return models_response
