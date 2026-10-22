@@ -1,3 +1,5 @@
+import os
+import requests
 from flask import Blueprint, request, Response
 from app.models.task import Task
 from .route_utilities import validate_model, create_model, get_models_with_filters
@@ -45,6 +47,24 @@ def mark_task_complete(task_id):
 
     task.completed_at = datetime.now()
     db.session.commit()
+
+    slack_token = os.environ.get("SLACK_BOT_TOKEN")
+
+    headers = {
+        "Authorization": f"Bearer {slack_token}",
+        "Content-Type": "application/json"
+    }
+
+    message = {
+        "channel": "C0CALAH38F6",
+        "text": f"{task.title} COMPLETED!"
+    }
+
+    requests.post(
+        "https://slack.com/api/chat.postMessage",
+        json=message,
+        headers=headers
+    )
 
     return Response(status=204)
 
