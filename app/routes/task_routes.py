@@ -48,7 +48,7 @@ def mark_task_complete(task_id):
     task.completed_at = datetime.now()
     db.session.commit()
 
-    slack_token = os.environ.get("SLACK_BOT_TOKEN")
+    SLACK_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
 
     headers = {
         "Authorization": f"Bearer {slack_token}",
